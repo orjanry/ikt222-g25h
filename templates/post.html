@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <article class="card">
+            <div class="card-body">
+                <h1 class="card-title">{{ post.title }}</h1>
+                <p class="post-meta">By {{ post.username }} on {{ post.created_at }}</p>
+                <div class="card-text">
+                    {{ post.content|replace('\n', '<br>')|safe }}
+                </div>
+            </div>
+        </article>
+
+        <div class="comment-section">
+            <h3>Comments ({{ comments|length }})</h3>
+            
+            {% if comments %}
+                {% for comment in comments %}
+                    <div class="comment">
+                        <strong>{{ comment.author_name }}</strong>
+                        <small class="text-muted">- {{ comment.created_at }}</small>
+                        <p>{{ comment.content }}</p>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <h4>Add a Comment</h4>
+            <form method="POST" action="{{ url_for('add_comment', post_id=post.id) }}">
+                <div class="mb-3">
+                    <label for="author_name" class="form-label">Your Name</label>
+                    <input type="text" class="form-control" id="author_name" name="author_name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="content" class="form-label">Comment</label>
+                    <textarea class="form-control" id="content" name="content" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Comment</button>
+            </form>
+        </div>
+
+        <div class="mt-4">
+            <a href="{{ url_for('index') }}" class="btn btn-secondary">Back to All Posts</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
