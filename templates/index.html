@@ -12,7 +12,18 @@
                         <h5 class="card-title">{{ post.title }}</h5>
                         <p class="post-meta">By {{ post.username }} on {{ post.created_at }}</p>
                         <p class="card-text">{{ post.content[:200] }}{% if post.content|length > 200 %}...{% endif %}</p>
-                        <a href="{{ url_for('view_post', post_id=post.id) }}" class="btn btn-primary">Read More</a>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="{{ url_for('view_post', post_id=post.id) }}" class="btn btn-primary">Read More</a>
+                            {% if session.user_id and session.user_id == post.author_id %}
+                                <div>
+                                    <a href="{{ url_for('edit_post', post_id=post.id) }}" class="btn btn-sm btn-outline-warning">Edit</a>
+                                    <form method="POST" action="{{ url_for('delete_post', post_id=post.id) }}" style="display: inline;" 
+                                          onsubmit="return confirm('Are you sure you want to delete this post?')">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                    </form>
+                                </div>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             {% endfor %}

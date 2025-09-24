@@ -184,6 +184,86 @@ def add_comment(post_id):
     flash('Comment added successfully!')
     return redirect(url_for('view_post', post_id=post_id))
 
+@app.route('/post/<int:post_id>/edit', methods=['GET', 'POST'])
+def edit_post(post_id):
+    if 'user_id' not in session:
+        flash('Please log in to edit posts.')
+        return redirect(url_for('login'))
+    
+    conn = get_db_connection()
+    
+    # Get the post
+    post = conn.execute('''
+        SELECT p.*, u.username 
+        FROM posts p 
+        JOIN users u ON p.author_id = u.id 
+        WHERE p.id = ?
+    ''', (post_id,)).fetchone()
+    
+    if not post:
+        flash('Post not found!')
+        conn.close()
+        return redirect(url_for('index'))
+    
+    # Check if user owns this post
+    if post['author_id'] != session['user_id']:
+        flash('You can only edit your own posts!')
+        conn.close()
+        return redirect(url_for('view_post', post_id=post_id))
+    
+    if request.method == 'POST':
+        title = request.form['title']
+        content = request.form['content']
+        
+        if not title or not content:
+            flash('Title and content are required!')
+            conn.close()
+            return render_template('edit_post.html', post=post)
+        
+        conn.execute('UPDATE posts SET title = ?, content = ? WHERE id = ?',
+                    (title, content, post_id))
+        conn.commit()
+        conn.close()
+        
+        flash('Post updated successfully!')
+        return redirect(url_for('view_post', post_id=post_id))
+    
+    conn.close()
+    return render_template('edit_post.html', post=post)
+
+@app.route('/post/<int:post_id>/delete', methods=['POST'])
+def delete_post(post_id):
+    if 'user_id' not in session:
+        flash('Please log in to delete posts.')
+        return redirect(url_for('login'))
+    
+    conn = get_db_connection()
+    
+    # Get the post to check ownership
+    post = conn.execute('SELECT author_id FROM posts WHERE id = ?', (post_id,)).fetchone()
+    
+    if not post:
+        flash('Post not found!')
+        conn.close()
+        return redirect(url_for('index'))
+    
+    # Check if user owns this post
+    if post['author_id'] != session['user_id']:
+        flash('You can only delete your own posts!')
+        conn.close()
+        return redirect(url_for('view_post', post_id=post_id))
+    
+    # Delete comments first (foreign key constraint)
+    conn.execute('DELETE FROM comments WHERE post_id = ?', (post_id,))
+    # Then delete the post
+    conn.execute('DELETE FROM posts WHERE id = ?', (post_id,))
+    
+    conn.commit()
+    conn.close()
+    
+    flash('Post deleted successfully!')
+    return redirect(url_for('index'))
+
 # VULNERABLE ENDPOINT - This demonstrates XSS vulnerability
 @app.route('/vulnerable_search')
 def vulnerable_search():
