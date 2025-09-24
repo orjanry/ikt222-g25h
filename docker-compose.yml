@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  flask-blog:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+      - ./blog.db:/app/blog.db
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+    restart: unless-stopped
