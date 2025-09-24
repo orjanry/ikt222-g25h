@@ -1,0 +1,8 @@
+# Database files
+blog.db
+blog.db-journal
+*.sqlite
+*.sqlite3
+
+# VS Code settings
+.vscode/
