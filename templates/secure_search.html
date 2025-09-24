@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="security-info">
+            <h4><i class="fas fa-shield-alt"></i> SECURE SEARCH PAGE</h4>
+            <p><strong>This page is secure!</strong> User input is properly escaped by Jinja2.</p>
+            <p>Current search query: <strong>{{ query }}</strong></p>
+        </div>
+
+        <h2>Search Results for: {{ query }}</h2>
+        
+        <div class="alert alert-success">
+            <strong>XSS Protection:</strong> The search query above is automatically escaped by Jinja2 template engine.
+            Even malicious scripts like <code>&lt;script&gt;alert('XSS')&lt;/script&gt;</code> are displayed as text.
+        </div>
+
+        {% if posts %}
+            <p>Found {{ posts|length }} post(s) matching your search.</p>
+            {% for post in posts %}
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ post.title }}</h5>
+                        <p class="post-meta">By {{ post.username }} on {{ post.created_at }}</p>
+                        <p class="card-text">{{ post.content[:200] }}{% if post.content|length > 200 %}...{% endif %}</p>
+                        <a href="{{ url_for('view_post', post_id=post_id) }}" class="btn btn-primary">Read More</a>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-info">
+                <p>No posts found matching your search query: <strong>{{ query }}</strong></p>
+            </div>
+        {% endif %}
+
+        <div class="mt-4">
+            <h4>Security Features Demonstrated:</h4>
+            <div class="card">
+                <div class="card-body">
+                    <h6>1. Automatic HTML Escaping</h6>
+                    <p>Jinja2 automatically escapes HTML characters like <code>&lt;</code>, <code>&gt;</code>, <code>&amp;</code>, and quotes.</p>
+                    
+                    <h6>2. No Direct Markup Rendering</h6>
+                    <p>Unlike the vulnerable version, we don't use <code>Markup()</code> or <code>|safe</code> filter unnecessarily.</p>
+                    
+                    <h6>3. Input Validation</h6>
+                    <p>While not implemented in this simple demo, production applications should validate and sanitize inputs.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <a href="{{ url_for('index') }}" class="btn btn-secondary">Back to Home</a>
+            <a href="/vulnerable_search?q={{ request.args.get('q', '') }}" class="btn btn-warning">View Vulnerable Version</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

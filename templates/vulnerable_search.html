@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="vulnerability-info">
+            <h4><i class="fas fa-exclamation-triangle"></i> VULNERABLE SEARCH PAGE</h4>
+            <p><strong>This page contains an XSS vulnerability!</strong> User input is not properly escaped.</p>
+            <p>Current search query: <strong>{{ query }}</strong></p>
+        </div>
+
+        <h2>Search Results for: {{ query }}</h2>
+        
+        <div class="alert alert-warning">
+            <strong>XSS Vulnerability:</strong> The search query above is directly inserted into the HTML without escaping.
+            Try searching for: <code>&lt;script&gt;alert('XSS Attack!')&lt;/script&gt;</code>
+        </div>
+
+        {% if posts %}
+            <p>Found {{ posts|length }} post(s) matching your search.</p>
+            {% for post in posts %}
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ post.title }}</h5>
+                        <p class="post-meta">By {{ post.username }} on {{ post.created_at }}</p>
+                        <p class="card-text">{{ post.content[:200] }}{% if post.content|length > 200 %}...{% endif %}</p>
+                        <a href="{{ url_for('view_post', post_id=post.id) }}" class="btn btn-primary">Read More</a>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-info">
+                <p>No posts found matching your search query: <strong>{{ query }}</strong></p>
+            </div>
+        {% endif %}
+
+        <div class="mt-4">
+            <h4>Try These XSS Payloads:</h4>
+            <div class="list-group">
+                <a href="?q=<script>alert('Basic XSS')</script>" class="list-group-item list-group-item-action">
+                    <strong>Basic Alert:</strong> <code>&lt;script&gt;alert('Basic XSS')&lt;/script&gt;</code>
+                </a>
+                <a href="?q=<img src=x onerror=alert('Image XSS')>" class="list-group-item list-group-item-action">
+                    <strong>Image Tag:</strong> <code>&lt;img src=x onerror=alert('Image XSS')&gt;</code>
+                </a>
+                <a href="?q=<svg onload=alert('SVG XSS')>" class="list-group-item list-group-item-action">
+                    <strong>SVG Tag:</strong> <code>&lt;svg onload=alert('SVG XSS')&gt;</code>
+                </a>
+                <a href="?q=javascript:alert('JavaScript Protocol')" class="list-group-item list-group-item-action">
+                    <strong>JavaScript Protocol:</strong> <code>javascript:alert('JavaScript Protocol')</code>
+                </a>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <a href="{{ url_for('index') }}" class="btn btn-secondary">Back to Home</a>
+            <a href="/secure_search?q={{ request.args.get('q', '') }}" class="btn btn-success">View Secure Version</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
