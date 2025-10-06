@@ -6,7 +6,6 @@ from datetime import datetime
 from markupsafe import Markup
 
 app = Flask(__name__)
-app.secret_key = 'your-secret-key-change-this-in-production'
 
 # Database initialization
 def init_db():
