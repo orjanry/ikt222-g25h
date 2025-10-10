@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4>Set Up Two-Factor Authentication</h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <strong>Step 1:</strong> Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.)
+                </div>
+                
+                <div class="text-center mb-4">
+                    <img src="data:image/png;base64,{{ qr_code }}" alt="2FA QR Code" class="img-fluid" style="max-width: 300px;">
+                </div>
+                
+                <div class="alert alert-warning">
+                    <strong>Step 2:</strong> Save this secret key in a safe place as backup:<br>
+                    <code class="fs-5">{{ secret }}</code>
+                </div>
+                
+                <div class="alert alert-success">
+                    <strong>Step 3:</strong> Your 2FA is now enabled. You'll need to enter a code from your authenticator app every time you log in.
+                </div>
+                
+                <div class="text-center">
+                    <a href="{{ url_for('login') }}" class="btn btn-primary">Continue to Login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

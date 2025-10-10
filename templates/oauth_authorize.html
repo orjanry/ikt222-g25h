@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h4>Authorize Application</h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <strong>{{ client.client_name }}</strong> would like to access your account.
+                </div>
+                
+                <h5>This application will be able to:</h5>
+                <ul>
+                    <li>Read your basic profile information</li>
+                    <li>Access your username and email</li>
+                </ul>
+                
+                <div class="alert alert-warning">
+                    <strong>Note:</strong> Only authorize applications you trust.
+                </div>
+                
+                <form method="POST" action="{{ url_for('approve_auth') }}">
+                    <input type="hidden" name="client_id" value="{{ request.args.get('client_id') }}">
+                    <input type="hidden" name="redirect_uri" value="{{ redirect_uri }}">
+                    <input type="hidden" name="state" value="{{ state }}">
+                    <input type="hidden" name="scope" value="{{ scope }}">
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success">Authorize</button>
+                        <a href="{{ url_for('index') }}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

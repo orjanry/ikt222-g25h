@@ -20,6 +20,13 @@
                     <div class="mb-3">
                         <label for="password" class="form-label">Password</label>
                         <input type="password" class="form-control" id="password" name="password" required>
+                        <small class="text-muted">Use a strong password with at least 8 characters</small>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="enable_2fa" name="enable_2fa">
+                        <label class="form-check-label" for="enable_2fa">
+                            Enable Two-Factor Authentication (Recommended)
+                        </label>
                     </div>
                     <button type="submit" class="btn btn-primary">Register</button>
                     <a href="{{ url_for('login') }}" class="btn btn-link">Already have an account? Login</a>
