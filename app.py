@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 from markupsafe import Markup
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from authlib.integrations.flask_client import OAuth
 
 app = Flask(__name__)
 app.secret_key = 'your-secret-key-change-this-in-production'
@@ -20,6 +21,18 @@ limiter = Limiter(
     app=app,
     default_limits=["200 per day", "50 per hour"],
     storage_uri="memory://"
+)
+
+# OAuth2 client setup
+oauth = OAuth(app)
+oauth.register(
+    name='github',
+    client_id='Ov23ctTighr3bE82ppTH',
+    client_secret='d4f06209cf08dbc4e78c6b24d1323ff4e0f70a80',
+    access_token_url='https://github.com/login/oauth/access_token',
+    authorize_url='https://github.com/login/oauth/authorize',
+    api_base_url='https://api.github.com/',
+    client_kwargs={'scope': 'user:email'},
 )
 
 # Database helper functions
@@ -270,6 +283,41 @@ def verify_2fa():
 def logout():
     session.clear()
     flash('You have been logged out.')
+    return redirect(url_for('index'))
+
+
+
+@app.route('/login/github')
+def github_login():
+    redirect_uri = url_for('github_callback', _external=True)
+    return oauth.github.authorize_redirect(redirect_uri)
+
+@app.route('/github/callback')
+def github_callback():
+    token = oauth.github.authorize_access_token()
+    user_info = oauth.github.get('user').json()
+    
+    # Store in database
+    conn = get_db_connection()
+    user = conn.execute('SELECT * FROM users WHERE oauth_id = ? AND oauth_provider = ?',
+                       (str(user_info['id']), 'github')).fetchone()
+    
+    if not user:
+        # Create new user from GitHub data
+        conn.execute('''INSERT INTO users (username, email, oauth_provider, oauth_id) 
+                       VALUES (?, ?, ?, ?)''',
+                    (user_info['login'], user_info['email'], 'github', str(user_info['id'])))
+        conn.commit()
+        user_id = conn.execute('SELECT last_insert_rowid()').fetchone()[0]
+    else:
+        user_id = user['id']
+    
+    conn.close()
+    
+    # Login user
+    session['user_id'] = user_id
+    session['username'] = user_info['login']
+    flash('Logged in with GitHub!')
     return redirect(url_for('index'))
 
 # ============= 2FA MANAGEMENT =============
