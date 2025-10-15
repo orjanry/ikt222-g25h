@@ -1,4 +1,4 @@
-
+version: "3.9"
 
 services:
   flask-blog:
@@ -7,8 +7,11 @@ services:
       - "5000:5000"
     volumes:
       - .:/app
-      - ./blog.db:/app/blog.db
+      - ./blog.db:/app/blog.db        # persist your SQLite file
     environment:
-      - FLASK_ENV=development
-      - FLASK_DEBUG=1
+      FLASK_ENV: development
+      FLASK_DEBUG: "1"
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
+      FLASK_SECRET: ${FLASK_SECRET}
     restart: unless-stopped

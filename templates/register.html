@@ -1,38 +1,33 @@
 {% extends "base.html" %}
-
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h4>Register</h4>
-            </div>
-            <div class="card-body">
-                <form method="POST">
-                    <div class="mb-3">
-                        <label for="username" class="form-label">Username</label>
-                        <input type="text" class="form-control" id="username" name="username" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="email" name="email" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
-                        <small class="text-muted">Use a strong password with at least 8 characters</small>
-                    </div>
-                    <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input" id="enable_2fa" name="enable_2fa">
-                        <label class="form-check-label" for="enable_2fa">
-                            Enable Two-Factor Authentication (Recommended)
-                        </label>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Register</button>
-                    <a href="{{ url_for('login') }}" class="btn btn-link">Already have an account? Login</a>
-                </form>
-            </div>
-        </div>
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header"><h4>Register</h4></div>
+      <div class="card-body">
+        <form method="POST">
+          <div class="mb-3">
+            <label class="form-label">Username</label>
+            <input class="form-control" name="username" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input class="form-control" type="email" name="email" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input class="form-control" type="password" name="password" required>
+            <small class="text-muted">Use a strong password</small>
+          </div>
+          <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="enable_2fa" name="enable_2fa">
+            <label class="form-check-label" for="enable_2fa">Enable Two-Factor Authentication</label>
+          </div>
+          <button class="btn btn-primary">Register</button>
+          <a href="{{ url_for('login') }}" class="btn btn-link">Already have an account? Login</a>
+        </form>
+      </div>
     </div>
+  </div>
 </div>
 {% endblock %}
