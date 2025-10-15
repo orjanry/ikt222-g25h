@@ -6,3 +6,5 @@ blog.db-journal
 
 # VS Code settings
 .vscode/
+
+.env
