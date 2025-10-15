@@ -49,9 +49,9 @@ def test_oauth2_flow():
     response = session.post(f'{BASE_URL}/login', data=login_data, allow_redirects=True)
     
     if response.status_code == 200:
-        print("✓ User logged in successfully")
+        print(" User logged in successfully")
     else:
-        print(f"✗ Login failed: {response.status_code}")
+        print(f" Login failed: {response.status_code}")
         return
     
     # Step 2: Request authorization
@@ -67,9 +67,9 @@ def test_oauth2_flow():
     response = session.get(f'{BASE_URL}/auth', params=auth_params, allow_redirects=False)
     
     if response.status_code == 200:
-        print("✓ Authorization page loaded")
+        print(" Authorization page loaded")
     else:
-        print(f"✗ Failed to load authorization page: {response.status_code}")
+        print(f" Failed to load authorization page: {response.status_code}")
         return
     
     # Step 3: Approve authorization
@@ -86,7 +86,7 @@ def test_oauth2_flow():
     
     if response.status_code == 302:  # Redirect
         redirect_url = response.headers['Location']
-        print(f"✓ Authorization approved, redirect to: {redirect_url}")
+        print(f" Authorization approved, redirect to: {redirect_url}")
         
         # Extract authorization code from redirect URL
         parsed_url = urlparse(redirect_url)
@@ -94,12 +94,12 @@ def test_oauth2_flow():
         
         if 'code' in query_params:
             auth_code = query_params['code'][0]
-            print(f"✓ Authorization code obtained: {auth_code[:20]}...")
+            print(f" Authorization code obtained: {auth_code[:20]}...")
         else:
-            print("✗ No authorization code in redirect URL")
+            print(" No authorization code in redirect URL")
             return
     else:
-        print(f"✗ Authorization approval failed: {response.status_code}")
+        print(f" Authorization approval failed: {response.status_code}")
         return
     
     # Step 4: Exchange authorization code for access token
@@ -120,12 +120,12 @@ def test_oauth2_flow():
         refresh_token = token_info.get('refresh_token')
         expires_in = token_info.get('expires_in')
         
-        print("✓ Access token obtained successfully")
+        print(" Access token obtained successfully")
         print(f"  Access Token: {access_token[:20]}...")
         print(f"  Refresh Token: {refresh_token[:20]}...")
         print(f"  Expires in: {expires_in} seconds")
     else:
-        print(f"✗ Token exchange failed: {response.status_code}")
+        print(f" Token exchange failed: {response.status_code}")
         print(f"  Response: {response.text}")
         return
     
@@ -140,12 +140,12 @@ def test_oauth2_flow():
     
     if response.status_code == 200:
         user_data = response.json()
-        print("✓ Protected resource accessed successfully")
+        print(" Protected resource accessed successfully")
         print(f"  User ID: {user_data.get('user_id')}")
         print(f"  Username: {user_data.get('username')}")
         print(f"  Email: {user_data.get('email')}")
     else:
-        print(f"✗ Failed to access protected resource: {response.status_code}")
+        print(f" Failed to access protected resource: {response.status_code}")
         print(f"  Response: {response.text}")
         return
     
@@ -159,20 +159,20 @@ def test_oauth2_flow():
     response = requests.get(f'{BASE_URL}/protected_resource', headers=headers)
     
     if response.status_code == 401:
-        print("✓ Invalid token correctly rejected")
+        print(" Invalid token correctly rejected")
     else:
-        print(f"✗ Expected 401 but got: {response.status_code}")
+        print(f" Expected 401 but got: {response.status_code}")
     
     print("\n" + "=" * 60)
     print("OAuth2 Flow Test Complete!")
     print("=" * 60)
     print("\nSummary:")
-    print("✓ User authentication")
-    print("✓ Authorization request")
-    print("✓ Authorization approval")
-    print("✓ Code exchange for token")
-    print("✓ Protected resource access")
-    print("✓ Invalid token rejection")
+    print(" User authentication")
+    print(" Authorization request")
+    print(" Authorization approval")
+    print(" Code exchange for token")
+    print(" Protected resource access")
+    print(" Invalid token rejection")
 
 def test_brute_force_protection():
     """Test brute force protection on login endpoint"""
