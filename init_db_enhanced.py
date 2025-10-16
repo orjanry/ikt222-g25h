@@ -4,7 +4,6 @@ from datetime import datetime
 def init_enhanced_db():
     """
     Enhanced database initialization with support for:
-    - Bcrypt password hashing
     - 2FA/TOTP
     - OAuth2
     - Brute force protection
