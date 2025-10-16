@@ -19,10 +19,10 @@ from flask import url_for as flask_url_for  # just to be explicit
 app = Flask(__name__)
 app.secret_key = os.getenv('FLASK_SECRET', 'your-secret-key-change-this-in-production')
 
-# --- Rate limiter (brute force) ---
+# Rate limiter (brute force) 
 limiter = Limiter(get_remote_address, app=app, default_limits=["200 per day", "50 per hour"], storage_uri="memory://")
 
-# --- OAuth2 CLIENT (GitHub) ---
+# OAuth2 CLIENT (GitHub)
 app.config.update(
     GITHUB_CLIENT_ID=os.getenv("GITHUB_CLIENT_ID", ""),
     GITHUB_CLIENT_SECRET=os.getenv("GITHUB_CLIENT_SECRET", ""),
@@ -43,7 +43,7 @@ GITHUB_READY = bool(app.config["GITHUB_CLIENT_ID"] and app.config["GITHUB_CLIENT
 def inject_flags():
     return {"GITHUB_READY": GITHUB_READY}
 
-# --- DB helpers ---
+# DB helpers
 def get_db_connection():
     conn = sqlite3.connect('blog.db')
     conn.row_factory = sqlite3.Row
@@ -102,7 +102,7 @@ def is_account_locked(username):
             return False
     return True
 
-# ---------- BASIC PAGES ----------
+# BASIC PAGES 
 @app.route('/')
 def index():
     conn = get_db_connection()
@@ -114,7 +114,7 @@ def index():
     conn.close()
     return render_template('index.html', posts=posts)
 
-# ---------- LOCAL AUTH ----------
+# LOCAL AUTH 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -241,7 +241,7 @@ def logout():
     flash('You have been logged out.')
     return redirect(url_for('index'))
 
-# ---------- GitHub OAuth (CLIENT): Login/Register with GitHub ----------
+# GitHub OAuth (CLIENT): Login/Register with GitHub
 @app.route('/login/github')
 def github_login():
     if not GITHUB_READY:
@@ -314,7 +314,7 @@ def github_callback():
     flash('Logged in with GitHub.')
     return redirect(url_for('index'))
 
-# ---------- Posts ----------
+# Posts
 @app.route('/create_post', methods=['GET', 'POST'])
 def create_post():
     if 'user_id' not in session:
